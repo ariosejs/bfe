@@ -1,0 +1,8 @@
+
+de_modules
+*DS_Store
+*.swp
+._*
+build/
+temp
+.idea
