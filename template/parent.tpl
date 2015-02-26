@@ -2,32 +2,19 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>{% block title %}{% endblock %}</title>
-        {% block styles %}
-        <link rel="stylesheet" href="/r/c/{@appname@}.css" type="text/css" media="screen" />
-        <link rel="stylesheet" href="/r/c/bui.css" type="text/css" media="screen" />
-        {% endblock %}
-        <base href="/{@appname@}/" />
+        <title>{% block title %}{@appname@}{% endblock %}</title>
+        <link rel="stylesheet" href="/public/v1.0.0/css/main.css" type="text/css" media="screen" />
     </head>
-    <body>
+    <body class="{@appname@}">
         <header>
-            <h1>BUI<small>ChunBo UI</small></h1>
-            <nav>
-                <ul>
-                    <li><a href="/index.html">Component Library</a></li>
-                    <li><a href="/demo.html">Demo</a></li>
-                </ul>
-            </nav>
+            header
         </header>
-        {% block content %}
-
-        {% endblock %}
-        <footer></footer>
+        {% block content %}{% endblock %}
+        <footer>
+            footer
+        </footer>
     </body>
-    <script type="text/javascript" src="/r/j/global.js"></script>
-    <script type="text/javascript" src="/r/j/bui.js"></script>
-    {% block scripts %}
-    <script type="text/javascript" src="/r/j/{@appname@}.js"></script>
-    {% endblock %}    
+    <script type="text/javascript" src="/public/v1.0.0/js/main.js"></script>
+    {% block scripts %}{% endblock %}    
 </html>
 

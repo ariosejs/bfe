@@ -1,54 +1,72 @@
 var version = 'v1.0.0';
-// 引入 gulp
-var gulp = require('gulp'); 
 
-// 引入组件
+var gulp = require('gulp'); 
 var jshint = require('gulp-jshint');
 var less = require('gulp-less');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
+var imagemin = require('gulp-imagemin');
 var swig = require('gulp-swig');
+var clean = require('gulp-clean');
+var rev = require('gulp-rev');
+var revReplace = require('gulp-rev-replace');
+var livereload = require('gulp-livereload');
 
-// 检查脚本
 gulp.task('lint', function() {
     gulp.src('./static/scripts/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
-// 编译Less
 gulp.task('less', function() {
     gulp.src('./static/styles/*.less')
-  .pipe(less())
-  .pipe(minifyCSS())
-  .pipe(gulp.dest('./build/public/'+version+'/css'));
+        .pipe(concat('main.css'))
+        .pipe(less())
+        .pipe(minifyCSS())
+        // .pipe(rev())
+        .pipe(gulp.dest('./build/public/'+version+'/css'));
 });
 
-// 合并，压缩文件
 gulp.task('scripts', function() {
     gulp.src('./static/scripts/*.js')
         .pipe(concat('main.js'))
         .pipe(gulp.dest('./build/public/'+version+'/js'))
         .pipe(rename('main.min.js'))
         .pipe(uglify())
+        .pipe(rev())
         .pipe(gulp.dest('./build/public/'+version+'/js'));
 });
 
-//swig
-gulp.task('templates', function() {
-  gulp.src('./template/*/*.tpl')
-    .pipe(swig())
-    .pipe(gulp.dest('./build/app/'))
+gulp.task('images', function(){
+    gulp.src('./static/images/*')
+        .pipe(imagemin())
+        .pipe(gulp.dest('./build/public/'+version+'/img'));
 });
 
-// 默认任务
-gulp.task('default', function(){
-    gulp.run('lint', 'less', 'scripts', 'templates');
+gulp.task('templates', function() {
+    gulp.src('./template/**/*.tpl')
+        .pipe(swig())
+        .pipe(revReplace())
+        .pipe(gulp.dest('./build/app/'));
+});
 
-    // 监听文件变化
-    // gulp.watch('./js/*.js', function(){
-    //     gulp.run('lint', 'less', 'scripts');
-    // });
+gulp.task('clean', function(){
+    return gulp.src('./build/public', {read: false})
+        .pipe(clean());
+});
+
+
+gulp.task('default',['clean'], function(){
+    gulp.start('lint', 'less', 'scripts', 'images', 'templates');
+});
+
+gulp.task('watch',function(){
+    
+    gulp.watch('./static/styles/*.less',['less']);
+    gulp.watch('./static/scripts/*.js',['scripts']);
+    gulp.watch('./static/images/*',['images']);
+    gulp.watch('./template/**/*.tpl',['templates']);
+
 });
