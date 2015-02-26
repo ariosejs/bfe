@@ -13,6 +13,27 @@ var clean = require('gulp-clean');
 var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var livereload = require('gulp-livereload');
+var _swig = require('swig');
+
+var path = require('path');
+var express = require('express');
+var app = express();
+var appbase = path.join(__dirname);
+app.engine('tpl' , _swig.renderFile);
+app.set('view engine' , 'tpl');
+app.set('views' , appbase+'/template' );
+app.set('view cache', false);
+
+app.use( '/', express.static( path.join(appbase )));
+app.use('/public', express.static(__dirname + '/build/public'));
+app.get( /^\/(.+?)\/(.*?).html$/ , function(req,res){
+    var appname = req.params[0];
+    var tplname = req.params[1];
+    res.render( path.join(appname , tplname) , {
+        appname:appname,
+        tplname: tplname
+    } );
+} );
 
 gulp.task('lint', function() {
     gulp.src('./static/scripts/*.js')
@@ -62,11 +83,15 @@ gulp.task('default',['clean'], function(){
     gulp.start('lint', 'less', 'scripts', 'images', 'templates');
 });
 
-gulp.task('watch',function(){
+gulp.task('watch',['clean'],function(){
     
     gulp.watch('./static/styles/*.less',['less']);
     gulp.watch('./static/scripts/*.js',['scripts']);
     gulp.watch('./static/images/*',['images']);
     gulp.watch('./template/**/*.tpl',['templates']);
+    gulp.start('lint', 'less', 'scripts', 'images', 'templates');
+    var port = 8080;
+    app.listen(port);
+    console.log('Server start at port ' + port);
 
 });
