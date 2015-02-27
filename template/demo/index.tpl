@@ -3,7 +3,7 @@
 {% parent %}
 {% endblock %}
 {% block content %}
-<div>demoariose</div>
+<div>aaads</div>
 {% endblock %}
 {% block scripts %}
 {% parent %}

@@ -6,7 +6,8 @@ var path = require('path');
 var browserify = require('browserify-middleware');
 var fs = require('fs');
 
-var app = express();
+// var app = express();
+var app = module.exports.app = exports.app = express();
 
 var appbase = path.join(__dirname);
 
@@ -64,7 +65,6 @@ app.get(/\/(\w+).json$/, function(req,res){
             
     });
 });
-
 
 var port = 8080;
 app.listen(port);
