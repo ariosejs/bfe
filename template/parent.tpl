@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <title>{% block title %}{@appname@}{% endblock %}</title>
-        <link rel="stylesheet" href="/public/v1.0.0/css/main.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="/public/1.0.0/css/main.css" type="text/css" media="screen" />
     </head>
     <body class="{@appname@}">
         <header>
@@ -14,7 +14,7 @@
             footer
         </footer>
     </body>
-    <script type="text/javascript" src="/public/v1.0.0/js/main.js"></script>
+    <script type="text/javascript" src="/public/1.0.0/js/main.js"></script>
     {% block scripts %}{% endblock %}    
 </html>
 
