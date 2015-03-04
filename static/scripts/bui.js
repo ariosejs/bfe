@@ -65,8 +65,9 @@
 						+'<div class="dialog-foot"></div>';
 			options = $.extend(defaults, options);
 			var o = options;
-
-			$("body").append(maskLayer).append(dialogLayer);
+			var scrollTop = $(window).scrollTop();
+			$('body').append(maskLayer).append(dialogLayer).addClass('dialogShow');
+			$('body').css('margin-top',-scrollTop);
 			dialogLayer.append(dHtml);
 			dialogLayer.find('h2').text(o.title);
 			dialogLayer.find('.dialog-content').html(o.content);
@@ -88,7 +89,24 @@
 			if(o.focus && o.data.length >= 1){
 				$._dialogFocus(o.data);
 			}
+			$(window).resize(function(){
+				togglePosition($(window).height());
+			});
+			togglePosition($(window).height());
+			function togglePosition(winHeight){
+				if(winHeight < dialogLayer.height() + 30){
+					dialogLayer.css({'position':'absolute'});
+					$('body').removeClass('dialogShow');
+				
+				}else{
+					dialogLayer.css({'position':'fixed'});
+					$('body').addClass('dialogShow');
+				}
+			}
 			function close_modal(modal_id) {
+				var top = $('body').css('margin-top').replace(/[^0-9]/ig,"");
+				$('body').removeClass('dialogShow');
+				$('body').attr('style',null).scrollTop(+top);
 				maskLayer.fadeOut(200,function(){
 					maskLayer.remove();
 				});
