@@ -46,7 +46,8 @@ gulp.task('scripts', function() {
 gulp.task('images', function(){
     gulp.src('./static/images/*')
         .pipe(imagemin())
-        .pipe(gulp.dest('./build/public/'+version+'/img'));
+        .pipe(gulp.dest('./build/public/'+version+'/img'))
+        .pipe(gulp.dest('./build/public/'+version+'/images'));
 });
 
 gulp.task('templates',function() {

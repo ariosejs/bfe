@@ -38,7 +38,12 @@ $(function(){
 	});
 	$('.act-dialog-focus').on('click',function(){
 		var data = $(this).attr('focus-data').split(';');
-		$.dialog({width:840,height:600,top:30,focus:true,data:data,id:'dialog-focus'});
+		$.dialog({focus:true,data:data});
+	});
+
+	$('.act-dialog-imgview').on('click',function(){
+		var data = $(this).attr('img-data').split(';');
+		$.dialog({imgView:true,data:data,close:false});
 	});
 	
 

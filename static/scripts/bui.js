@@ -55,6 +55,7 @@
 				id:'',
 				url:'',
 				focus:false,
+				imgView:false,
 				data:[]
 			};
 			var maskLayer = $('<div class="mask"></div>');
@@ -77,18 +78,29 @@
 			maskLayer.click(function(){
 				close_modal(dialogLayer);
 			});
-			$('a.close').click(function(e){
-				e.preventDefault();
-				close_modal(dialogLayer);
-			});
+			if(o.focus && o.data.length >= 1){
+				o.width = 840;
+				o.height = 600;
+				o.top = 30;
+				dialogLayer.attr('id','dialog-focus');
+				$._dialogFocus(o.data);
+			}else if(o.imgView){
+				o.width = 500;
+				o.height = 666;
+				o.top = $(window).height()/2 - 333;
+				dialogLayer.attr('id','dialog-imgview');
+				$._dialogImgView(o.data);
+				maskLayer.addClass('maskClose');
+			}
 			if(o.url.length > 5){
 				dialogLayer.find('.dialog-content').html('<iframe frameborder="0" width="100%" height="100%" src="'+o.url+'"></iframe>');
 				$('.dialog-content iframe').css({'margin':'30px -10px 0','width':o.width,'height':o.height,'overflow':'hidden'});
 			}
 			dialogLayer.show().css({'width':o.width,'height':o.height,'margin-left':-o.width/2}).animate({top:o.top,opacity:1},300,'linear');
-			if(o.focus && o.data.length >= 1){
-				$._dialogFocus(o.data);
-			}
+			$('a.close').click(function(e){
+				e.preventDefault();
+				close_modal(dialogLayer);
+			});
 			$(window).resize(function(){
 				togglePosition($(window).height());
 			});
@@ -106,7 +118,9 @@
 			function close_modal(modal_id) {
 				var top = $('body').css('margin-top').replace(/[^0-9]/ig,"");
 				$('body').removeClass('dialogShow');
-				$('body').attr('style',null).scrollTop(+top);
+				$('body').attr('style','');
+				$(window).scrollTop(+top);
+				
 				maskLayer.fadeOut(200,function(){
 					maskLayer.remove();
 				});
@@ -193,6 +207,73 @@
 					posY = e.pageY - $(this).offset().top;
 				$(this).find('img').css({'margin-left':-(posX*RatioX),'margin-top':-(posY*RatioY)});
 			});
+		},
+		_dialogImgView: function(data){
+			var focusHtml = '<div class="img-view">'
+								+'<a href="#" class="close"></a>'
+								+'<div class="img-view-page"></div>'
+								+'<a href="#" class="comment-img-view-act icon i-prev"></a>'
+								+'<a href="#" class="comment-img-view-act icon i-next"></a>'
+								+'<div class="img-view-list"><ul></ul></div>'
+								
+							+'</div>';
+			$('.dialog-content').html(focusHtml);
+			
+			for (var i = 0; i < data.length; i++) {
+				$('.img-view-list ul').append('<li><img src="'+data[i]+'"><i></i></li>');
+			}
+			$('body').off('click','.i-prev,.i-next');
+			if(data.length>1){
+				$('.img-view-page').html('');
+				$('.i-prev').css({'left':-20,'opacity':0});
+				$('.i-next').css({'right':-20,'opacity':0});
+				$('.img-view-page').css({'bottom':-10,'opacity':0});
+				setTimeout(function(){
+					$('.i-prev').animate({left:-50,opacity:1},300);
+					$('.i-next').animate({right:-50,opacity:1},300);
+					$('.img-view-page').animate({bottom:-30,opacity:1},300);
+				}, 300);
+				var imgViewList = $('.img-view-list ul');
+				var imgViewItem = $('.img-view-list li');
+				var movieOnce = imgViewItem.outerWidth();
+				var listWidth = imgViewItem.length*movieOnce;
+				var reportPos = 0;
+				imgViewList.css({'width':listWidth,'left':0});
+				for(var i = 0; i < imgViewItem.length; i++){
+					$('.img-view-page').append('<i></i>');
+				}
+				var pageNum = 0;
+				var changePageNum = function (num){
+					var pageI = $('.img-view-page i');
+					pageI.removeClass('on');
+					pageI.eq(num).addClass('on');
+				};
+				changePageNum(pageNum);
+				var reportPos = 0;
+				$('body').on('click','.i-prev,.i-next',function(e){
+					e.preventDefault();
+					if($(this).hasClass('i-prev')){
+						reportPos = reportPos + movieOnce;
+						if(reportPos > 0){
+							reportPos = -listWidth + movieOnce;
+							pageNum = Math.ceil(imgViewItem.length) - 1;
+						}else{
+							pageNum--;
+						}
+					}else{
+						reportPos = reportPos - movieOnce;
+						if(reportPos > -listWidth){
+							pageNum++;
+						}else{
+							reportPos = 0;
+							pageNum = 0;
+						}
+					}
+					imgViewList.animate({left:reportPos},200);
+					changePageNum(pageNum);
+				})
+			}
+
 		}
 
 		// TODO iframe & position
