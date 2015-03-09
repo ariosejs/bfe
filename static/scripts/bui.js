@@ -40,7 +40,7 @@
  * dialog  
  * Copyright (c) 2015 QianCheng@chunbo http://ariose.me/ 
  * Date: 2015-02-10 
- * jQuery 类扩展 focus相关为安心度定制
+ * jQuery 类扩展 focus相关为安心度定制 imgView为图片预览
  */ 
  	$.extend({
 		dialog: function(options) {
@@ -56,6 +56,7 @@
 				url:'',
 				focus:false,
 				imgView:false,
+				closeDialog:false,
 				data:[]
 			};
 			var maskLayer = $('<div class="mask"></div>');
@@ -66,15 +67,22 @@
 						+'<div class="dialog-foot"></div>';
 			options = $.extend(defaults, options);
 			var o = options;
-			var scrollTop = $(window).scrollTop();
-			$('body').append(maskLayer).append(dialogLayer).addClass('dialogShow');
-			$('body').css('margin-top',-scrollTop);
-			dialogLayer.append(dHtml);
-			dialogLayer.find('h2').text(o.title);
-			dialogLayer.find('.dialog-content').html(o.content);
-			dialogLayer.attr('id',o.id);
-			o.close ? null : dialogLayer.find('.close').remove();
-			maskLayer.fadeTo(200, o.maskLayer);
+			function show(){
+				var scrollTop = $(window).scrollTop();
+				$('body').append(maskLayer).append(dialogLayer).addClass('dialogShow');
+				$('body').css('margin-top',-scrollTop);
+				dialogLayer.append(dHtml);
+				dialogLayer.find('h2').text(o.title);
+				dialogLayer.find('.dialog-content').html(o.content);
+				dialogLayer.attr('id',o.id);
+				o.close ? null : dialogLayer.find('.close').remove();
+				maskLayer.fadeTo(200, o.maskLayer);
+			}
+			if(o.closeDialog){
+				close_modal($('.dialog'));
+			}else{
+				show();
+			}
 			maskLayer.click(function(){
 				close_modal(dialogLayer);
 			});
@@ -121,13 +129,14 @@
 				$('body').attr('style','');
 				$(window).scrollTop(+top);
 				
-				maskLayer.fadeOut(200,function(){
-					maskLayer.remove();
+				modal_id.prev().fadeOut(200,function(){
+					modal_id.prev().remove();
 				});
-				dialogLayer.animate({top:0,opacity:0},200,function(){
-					dialogLayer.remove();
+				modal_id.animate({top:0,opacity:0},200,function(){
+					modal_id.remove();
 				});
 			}
+
 		},
 		_dialogFocus: function(data){
 			var focusHtml = '<div class="testReportList"><ul></ul></div>'
@@ -283,5 +292,6 @@
 
 
 	});
+
 
 })(jQuery);
